@@ -53,4 +53,7 @@ BinarySearchTree.prototype.depthFirstLog = function(cb) {
 
 /*
  * Complexity: What is the time complexity of the above functions?
+ * contains - linear -- O(n) where n is the number of nodes as this is not a balanced tree
+ * insert - linear -- O(n) where n is the number of nodes as this is not a balanced tree
+ * depthFirstLog - linear -- O(n) where n is the number of nodes
  */
