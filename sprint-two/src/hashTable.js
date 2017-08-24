@@ -7,45 +7,67 @@ var HashTable = function() {
 
 HashTable.prototype.insert = function(k, v) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  while (this._storage.get(index) !== undefined) {
-    if (this._storage.get(index)[0] === k) {
-      break;
-    }
-    index++;
-    index %= this._limit;
+  if (!this._storage[index]) {
+    this._storage[index] = LinkedList();
   }
-  this._storage.set(index, [k, v]);
+  var list = this._storage[index];
+  var node = list.head;
+  while (node) {
+    if (node.value[0] === k) {
+      node.value[1] = v;
+      return;
+    }
+    node = node.next;
+  }
+  list.addToTail([k, v]);
 };
 
 HashTable.prototype.retrieve = function(k) {
-  var baseIndex = getIndexBelowMaxForKey(k, this._limit);
-  if (this._storage.get(baseIndex)) {
-    for (var i = 0; i < this._limit; i++) {
-      var currentIndex = (baseIndex + i) % this._limit;
-      var pair = this._storage.get(currentIndex);
-      if (pair && pair[0] === k) {
-        return pair[1];
+  var index = getIndexBelowMaxForKey(k, this._limit);
+  var list = this._storage[index];
+  if (list) {
+    var node = list.head;
+    while (node) {
+      if (node.value[0] === k) {
+        return node.value[1];
       }
+      node = node.next;
     }
   }
 };
 
 HashTable.prototype.remove = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  while (this._storage.get(index)[0] !== k) {
-    index++;
-    index %= this._limit;
+  if (this._storage[index]) {
+    var list = this._storage[index];
+    var node = list.head;
+    var prev;
+    while (node) {
+      if (node.value[0] === k) {
+        if (prev) {
+          prev.next = node.next;
+        } else {
+          list.removeHead();
+        }
+        return;
+      } else {
+        prev = node;
+        node = node.next;
+      }
+    }
   }
-  this._storage.set(index, undefined);
 };
 
 
 
 /*
  * Complexity: What is the time complexity of the above functions?
- * insert: linear - O(n) where n is size of hashTable
- * retrieve: linear - O(n) where n is size of hashTable
- * remove: linear - O(n) where n is size of hashTable
+ * insert: between constant and linear - O(1) to O(n/k)
+ *         where n is total number of values, and k is the maximum size of the hash table
+ * retrieve: between constant and linear - O(1) to O(n/k)
+ *           where n is total number of values, and k is the maximum size of the hash table
+ * remove: between constant and linear - O(1) to O(n/k)
+ *         where n is total number of values, and k is the maximum size of the hash table
  */
 
 
