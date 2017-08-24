@@ -11,13 +11,28 @@ describe('binarySearchTree', function() {
     expect(binarySearchTree.depthFirstLog).to.be.a('function');
   });
 
-  it('should insert values at the correct location in the tree', function() {
+  it('should insert distinct values at the correct location in the tree', function() {
     binarySearchTree.insert(2);
     binarySearchTree.insert(3);
     binarySearchTree.insert(7);
     binarySearchTree.insert(6);
     expect(binarySearchTree.left.right.value).to.equal(3);
     expect(binarySearchTree.right.left.value).to.equal(6);
+  });
+
+  it('should insert duplicate values at the correct location in the tree', function() {
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(6);
+    binarySearchTree.insert(-10);
+    binarySearchTree.insert(-7);
+    binarySearchTree.insert(12);
+    
+    var array = [];
+    var func = function(value) { array.push(value); };
+    binarySearchTree.depthFirstLog(func);
+    expect(array).to.eql([5, 2, 2, -10, -7, 3, 6, 12]);
   });
 
   it('should have a working "contains" method', function() {
