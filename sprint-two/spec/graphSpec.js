@@ -20,6 +20,14 @@ describe('graph', function() {
     expect(graph.contains(1)).to.equal(true);
   });
 
+  it('should do nothing if a node that already exists is added', function() {
+    graph.addNode(1);
+    graph.addNode(2);
+    graph.addEdge(1, 2);
+    graph.addNode(1);
+    expect(graph.hasEdge(1, 2)).to.equal(true);
+  });
+
   it('should remove nodes that were inserted', function() {
     graph.addNode(2);
     expect(graph.contains(2)).to.equal(true);
