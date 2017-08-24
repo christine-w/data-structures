@@ -17,7 +17,9 @@ treeMethods.addChild = function(value) {
 
 treeMethods.contains = function(target) {
   for (let i = 0; i < this.children.length; i++) {
-    if (this.children[i].value === target) {
+    let stringifiedValue = JSON.stringify(this.children[i].value);
+    let stringifiedTarget = JSON.stringify(target);
+    if (stringifiedValue === stringifiedTarget) {
       return true;
     } else {
       if (this.children[i].contains(target)) {

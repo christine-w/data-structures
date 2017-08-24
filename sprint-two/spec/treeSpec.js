@@ -11,9 +11,27 @@ describe('tree', function() {
     expect(tree.hasOwnProperty('value')).to.equal(true);
   });
 
-  it('should add children to the tree', function() {
+  it('should add children that is an integer to the tree', function() {
     tree.addChild(5);
     expect(tree.children[0].value).to.equal(5);
+  });
+
+  it('should add children of any primitive type to the tree', function() {
+    tree.addChild('apple');
+    expect(tree.contains('apple')).to.equal(true);
+    tree.addChild(false);
+    expect(tree.contains(false)).to.equal(true);
+    tree.addChild(null);
+    expect(tree.contains(null)).to.equal(true);
+  });
+  
+  it('should add children of the type object, function or array to the tree', function() {
+    tree.addChild([1, false, null]);
+    expect(tree.contains([1, false, null])).to.equal(true);
+    tree.addChild(function() {});
+    expect(tree.contains(function() {})).to.equal(true);
+    tree.addChild({1: 'a', 2: 'b'});
+    expect(tree.contains({1: 'a', 2: 'b'})).to.equal(true);
   });
 
   it('should return true for a value that the tree contains', function() {
