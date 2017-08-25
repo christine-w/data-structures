@@ -57,4 +57,29 @@ describe('doublyLinkedList', function() {
     expect(doublyLinkedList.contains(3)).to.equal(true);
     expect(doublyLinkedList.contains(2)).to.equal(false);
   });
+
+  it('should add and remove elements correctly with random testing', function() {
+    var alternative = [];
+    for (var i = 0; i < 10000; i++) {
+      var rand = Math.floor(Math.random() * 4);
+      var val = Math.random();
+      if (rand === 0) {
+        doublyLinkedList.addToHead(val);
+        alternative.unshift(val);
+        expect(doublyLinkedList.contains(val)).to.equal(true);
+      } else if (rand === 1) {
+        doublyLinkedList.addToTail(val);
+        alternative.push(val);
+        expect(doublyLinkedList.contains(val)).to.equal(true);
+      } else if (rand === 2) {
+        var result = doublyLinkedList.removeHead();
+        var expected = alternative.shift();
+        expect(result).to.equal(expected);
+      } else {
+        var result = doublyLinkedList.removeTail();
+        var expected = alternative.pop();
+        expect(result).to.equal(expected);
+      }
+    }
+  });
 });
