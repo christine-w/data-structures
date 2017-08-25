@@ -60,8 +60,49 @@ describe('hashTable', function() {
     window.getIndexBelowMaxForKey = oldHashFunction;
   });
 
+  it('should store a variable that tracks the number of used indices in the hash table', function() {
+    var oldHashFunction = window.getIndexBelowMaxForKey;
+    var hashIndex = 0;
+    window.getIndexBelowMaxForKey = function() {
+      hashIndex++; 
+      return hashIndex % 3;
+    };    
+    hashTable.insert(1, 1);
+    hashTable.insert(2, 2);
+    hashTable.insert(3, 3);
+    hashTable.insert(4, 4);
+    hashTable.insert(5, 5);
+    expect(hashTable._count).to.equal(5);
+    window.getIndexBelowMaxForKey = oldHashFunction;
+  });
+  
+  // intermediary test before resizing is implemented
+  xit('should recognize when the hashTable is at least 75% full', function() {
+    var oldHashFunction = window.getIndexBelowMaxForKey;
+    var hashIndex = 0;
+    window.getIndexBelowMaxForKey = function() {
+      hashIndex++; 
+      return hashIndex % 8;
+    };    
+
+    hashTable.insert(1, 1);
+    expect(hashTable.isAlmostFull()).to.equal(false);
+    hashTable.insert(2, 2);
+    expect(hashTable.isAlmostFull()).to.equal(false);
+    hashTable.insert(3, 3);
+    expect(hashTable.isAlmostFull()).to.equal(false);
+    hashTable.insert(4, 4);
+    expect(hashTable.isAlmostFull()).to.equal(false);
+    hashTable.insert(5, 5);
+    expect(hashTable.isAlmostFull()).to.equal(false);
+    hashTable.insert(6, 6);
+    expect(hashTable.isAlmostFull()).to.equal(true);
+
+    window.getIndexBelowMaxForKey = oldHashFunction;
+  });
+  
   // (Advanced! Remove the extra "x" when you want the following tests to run)
-  xit ('should double in size when needed', function() {
+  it ('should double in size when needed', function() {
     _.each(people, function(person) {
       var firstName = person[0];
       var lastName = person[1];
@@ -71,7 +112,26 @@ describe('hashTable', function() {
     expect(hashTable._limit).to.equal(16);
   });
 
-  xit ('should halve in size when needed', function() {
+  it ('should be able to retrieve everything correctly after doubling size', function() {
+    var oldHashFunction = window.getIndexBelowMaxForKey;
+    window.getIndexBelowMaxForKey = function(k, limit) {
+      return k % limit;
+    };
+
+    var values = [1, 9, 3, 17, 6, 14];
+
+    for (var i = 0; i < values.length; i++) {
+      hashTable.insert(values[i], values[i]);
+    }
+
+    for (var i = 0; i < values.length; i++) {
+      expect(hashTable.retrieve(values[i])).to.equal(values[i]);
+    }
+
+    window.getIndexBelowMaxForKey = oldHashFunction;
+  });
+
+  it ('should halve in size when needed', function() {
     _.each(people, function(person) {
       var firstName = person[0];
       var lastName = person[1];
@@ -85,5 +145,21 @@ describe('hashTable', function() {
     hashTable.remove('John');
     hashTable.remove('Mr.');
     expect(hashTable._limit).to.equal(8);
+  });
+
+  it ('should be able to retrieve everything correctly after resizing (with random insertion/removal)', function() {
+    var valuesInHash = [];
+    for (var i = 0; i < 10000; i++) {
+      var randomVar = Math.random();
+      var randomVal = Math.floor(Math.random() * 1000);
+      if (randomVar > 0.5) {
+        hashTable.insert(randomVal, randomVal);
+        valuesInHash[randomVal] = randomVal;
+      } else {
+        hashTable.remove(randomVal);
+        valuesInHash[randomVal] = undefined;
+      }
+      expect(hashTable.retrieve(randomVal)).to.equal(valuesInHash[randomVal]);
+    }
   });
 });
