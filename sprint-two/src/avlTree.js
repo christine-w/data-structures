@@ -11,23 +11,26 @@ AVLTree.prototype.insert = function(key, value) {
   }
 };
 
-AVLTree.prototype.rotateIfNeeded = function(node) {        
-  if (node.balanceFactor === 2) {
-    if (node.right.balanceFactor < 0) {
-      // do an extra rotation (double rotation) in a right-left situation
-      // should become a right-right situation after the rotation
-      this.rotate(node.right.left, node.right, true, true);
+AVLTree.prototype.rotateIfNeeded = function(node) {
+  if (Math.abs(node.balanceFactor) === 2) {
+    if (node.balanceFactor > 0) {
+      if (node.right.balanceFactor < 0) {
+        // do an extra rotation (double rotation) in a right-left situation
+        // should become a right-right situation after the rotation
+        this.rotate(node.right.left, node.right, true, true);
+      }
+      // do a simple rotation in a right-right situation
+      this.rotate(node, node.right, false, false);
+    } else if (node.balanceFactor < 0) {
+      if (node.left.balanceFactor > 0) {
+        // do an extra rotation (double rotation) in a left-right situation
+        // should become a left-left situation after the rotation
+        this.rotate(node.left, node.left.right, false, true);
+      }
+      // do a simple rotation in a left-left situation
+      this.rotate(node.left, node, true, false);
     }
-    // do a simple rotation in a right-right situation
-    this.rotate(node, node.right, false, false);
-  } else if (node.balanceFactor === -2) {
-    if (node.left.balanceFactor > 0) {
-      // do an extra rotation (double rotation) in a left-right situation
-      // should become a left-left situation after the rotation
-      this.rotate(node.left, node.left.right, false, true);
-    }
-    // do a simple rotation in a left-left situation
-    this.rotate(node.left, node, true, false);
+    node.parent.updateDepth();
   }
 };
 
@@ -144,6 +147,20 @@ AVLNode.prototype.depthFirstLog = function(callback) {
   }
   if (node.right) {
     node.right.depthFirstLog(callback);
+  }
+};
+
+AVLNode.prototype.updateDepth = function() {
+  if (this.parent) {
+    this.depth = this.parent.depth + 1;
+  } else {
+    this.depth = 0;
+  }
+  if (this.left) {
+    this.left.updateDepth();
+  }
+  if (this.right) {
+    this.right.updateDepth();
   }
 };
 
