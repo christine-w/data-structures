@@ -109,9 +109,9 @@ describe('avlTree', function() {
     expect(avlTree.root.depth).to.equal(0);
     expect(avlTree.root.left.depth).to.equal(1);
     expect(avlTree.root.right.depth).to.equal(1);
-    // expect(avlTree.root.balanceFactor).to.equal(0);
-    // expect(avlTree.root.left.balanceFactor).to.equal(0);
-    // expect(avlTree.root.right.balanceFactor).to.equal(0);
+    expect(avlTree.root.balanceFactor).to.equal(-1);
+    expect(avlTree.root.left.balanceFactor).to.equal(0);
+    expect(avlTree.root.right.balanceFactor).to.equal(0);
   });
 
   it('should rebalance with a simple left rotation in a right-right situation', function() {
@@ -123,9 +123,9 @@ describe('avlTree', function() {
     expect(avlTree.root.depth).to.equal(0);
     expect(avlTree.root.left.depth).to.equal(1);
     expect(avlTree.root.right.depth).to.equal(1);
-    // expect(avlTree.root.balanceFactor).to.equal(0);
-    // expect(avlTree.root.left.balanceFactor).to.equal(0);
-    // expect(avlTree.root.right.balanceFactor).to.equal(0);
+    expect(avlTree.root.balanceFactor).to.equal(1);
+    expect(avlTree.root.left.balanceFactor).to.equal(0);
+    expect(avlTree.root.right.balanceFactor).to.equal(0);
   });  
 
   it('should rebalance with a double rotation in a left-right situation', function() {
@@ -137,9 +137,9 @@ describe('avlTree', function() {
     expect(avlTree.root.depth).to.equal(0);
     expect(avlTree.root.left.depth).to.equal(1);
     expect(avlTree.root.right.depth).to.equal(1);
-    // expect(avlTree.root.balanceFactor).to.equal(0);
-    // expect(avlTree.root.left.balanceFactor).to.equal(0);
-    // expect(avlTree.root.right.balanceFactor).to.equal(0);
+    expect(avlTree.root.balanceFactor).to.equal(0);
+    expect(avlTree.root.left.balanceFactor).to.equal(1);
+    expect(avlTree.root.right.balanceFactor).to.equal(0);
   });
 
   it('should rebalance with a double rotation in a right-left situation', function() {
@@ -151,8 +151,8 @@ describe('avlTree', function() {
     expect(avlTree.root.depth).to.equal(0);
     expect(avlTree.root.left.depth).to.equal(1);
     expect(avlTree.root.right.depth).to.equal(1);
-    // expect(avlTree.root.balanceFactor).to.equal(0);
-    // expect(avlTree.root.left.balanceFactor).to.equal(0);
-    // expect(avlTree.root.right.balanceFactor).to.equal(0);
+    expect(avlTree.root.balanceFactor).to.equal(0);
+    expect(avlTree.root.left.balanceFactor).to.equal(0);
+    expect(avlTree.root.right.balanceFactor).to.equal(-1);
   });
 });
