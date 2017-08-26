@@ -1,13 +1,15 @@
 describe('avlTree', function() {
 
   var avlTree;
+  var avlNode;
   var testValues = [100, 80, 102, 52, 93, 180, 85, 97, 98, 99];
   var testValueDepths = [0, 1, 1, 2, 2, 2, 3, 3, 4, 5];
   var testValueBF = [-3, 3, 1, 0, 2, 0, 0, 2, 1, 0];
   var testValueParents = [null, 100, 100, 80, 80, 102, 93, 93, 97, 98];
 
   beforeEach(function() {
-    avlTree = new AVLTree(100, 100);
+    avlNode = new AVLNode(100, 100);
+    avlTree = new AVLTree(avlNode);
   });
 
   it('should insert values into the AVL Tree', function() {
@@ -37,7 +39,7 @@ describe('avlTree', function() {
     for (var i = 1; i < testValues.length; i++) {
       avlTree.insert(testValues[i], testValues[i]);
     }
-    avlTree.depthFirstLog(cb);   
+    avlTree.root.depthFirstLog(cb);   
     expect(result).to.deep.equal(expected);
 
   });
@@ -63,7 +65,41 @@ describe('avlTree', function() {
       var node = avlTree._searchNode(testValues[i]);
       expect(node.getBalanceFactor()).to.equal(testValueBF[i]);
     }
-  });  
+  });
+
+  it('should update balance factors as nodes are inserted', function() {
+    var values = [80, 102, 52];
+    var balanceFactors = [[-1, 0], [0, 0, 0], [-1, -1, 0, 0]];
+    var results = [];
+    for (var i = 0; i < values.length; i++) {
+      avlTree.insert(values[i], values[i]);
+      var node = avlTree._searchNode(values[i]);
+      var innerResults = [];
+      avlTree.root.depthFirstLog(function(innerNode) {
+        innerResults.push(innerNode.balanceFactor);
+      });
+      results.push(innerResults);
+    }
+    expect(results).to.deep.equal(balanceFactors);
+
+    var avlNode2 = new AVLNode(100, 100);
+    var avlTree2 = new AVLTree(avlNode2);   
+    values = [80, 132, 131, 97, 180, 153, 110];
+    balanceFactors = [[-1, 0], [0, 0, 0], [1, 0, -1, 0], [0, 1, 0, -1, 0], [0, 1, 0, 0, 0, 0], [1, 1, 0, 1, 0, -1, 0], [1, 1, 0, 0, -1, 0, -1, 0]];
+    results = [];
+    for (var i = 0; i < values.length; i++) {
+      avlTree2.insert(values[i], values[i]);
+      var node = avlTree2._searchNode(values[i]);
+      var innerResults = [];
+      avlTree2.root.depthFirstLog(function(innerNode) {
+        innerResults.push(innerNode.balanceFactor);
+      });
+      results.push(innerResults);
+    }
+    expect(results).to.deep.equal(balanceFactors);  
+
+  });
+  
 
   it('should correctly determine node blanace factor for an AVL Tree node as node are inserted', function() {
   });

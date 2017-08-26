@@ -1,4 +1,68 @@
-var AVLTree = function(key, value) {
+var AVLTree = function(node) {
+  this.root = node;
+};
+
+
+AVLTree.prototype.insert = function(key, value) {
+  var newNode = new AVLNode(key, value);
+  var currentNode = this.root;
+  while (currentNode) {
+    newNode.depth++;
+    if (currentNode.key > key) {
+      if (currentNode.left) {
+        currentNode = currentNode.left;
+      } else {
+        currentNode.left = newNode;
+        newNode.parent = currentNode;
+        currentNode.updateBalanceFactor();
+        break;
+      }
+    } else {
+      if (currentNode.right) {
+        currentNode = currentNode.right;
+      } else {
+        currentNode.right = newNode;
+        newNode.parent = currentNode;
+        currentNode.updateBalanceFactor();
+        break;
+      }
+    }
+  }
+};
+
+AVLTree.prototype.search = function(key) {
+  var currentNode = this.root;
+  while (currentNode) {
+    if (currentNode.key === key) {
+      return currentNode.value;
+    } else if (currentNode.key > key) {
+      currentNode = currentNode.left;
+    } else {
+      currentNode = currentNode.right;
+    }
+  }
+};
+
+AVLTree.prototype._searchNode = function(key) {
+  var currentNode = this.root;
+  while (currentNode) {
+    if (currentNode.key === key) {
+      return currentNode;
+    } else if (currentNode.key > key) {
+      currentNode = currentNode.left;
+    } else {
+      currentNode = currentNode.right;
+    }
+  }
+};
+
+// AVLTree.prototype.rotateLeft = function() {
+// };
+
+// AVLTree.prototype.rotateRight = function() {
+// };
+
+var AVLNode = function(key, value) {
   this.parent = null;
   this.left = null;
   this.right = null;
@@ -8,57 +72,7 @@ var AVLTree = function(key, value) {
   this.balanceFactor = 0;
 };
 
-AVLTree.prototype.insert = function(key, value) {
-  var newNode = new AVLTree(key, value);
-  var currentNode = this;
-  while (currentNode) {
-    newNode.depth++;
-    if (currentNode.key > key) {
-      if (currentNode.left) {
-        currentNode = currentNode.left;    
-      } else {
-        currentNode.left = newNode;
-        newNode.parent = currentNode;
-        break;
-      }
-    } else {
-      if (currentNode.right) {
-        currentNode = currentNode.right;
-      } else {
-        currentNode.right = newNode;
-        newNode.parent = currentNode;
-        break;
-      }
-    }
-  }
-};
-
-AVLTree.prototype.search = function(key) {
-  if (this.key === key) {
-    return this.value;
-  } else if (this.key > key) {
-    if (this.left) {
-      return this.left.search(key);
-    } 
-  } else {
-    if (this.right) {
-      return this.right.search(key);
-    }
-  } 
-};
-
-AVLTree.prototype._searchNode = function(key) {
-  var resultNode;
-  var cb = function(node) {
-    if (node.key === key) {
-      resultNode = node;
-    }
-  };
-  this.depthFirstLog(cb);
-  return resultNode;
-};
-
-AVLTree.prototype.depthFirstLog = function(callback) {
+AVLNode.prototype.depthFirstLog = function(callback) {
   var node = this;
   callback(node);
   if (node.left) {
@@ -69,13 +83,20 @@ AVLTree.prototype.depthFirstLog = function(callback) {
   }
 };
 
-// AVLTree.prototype.updateHeight = function() {
-// };
-
-AVLTree.prototype.updateBalanceFactor = function() {
+AVLNode.prototype.updateBalanceFactor = function() {
+  this.balanceFactor = this.getBalanceFactor();
+  if (this.balanceFactor === 1 || this.balanceFactor === -1) {
+    if (this.parent) {
+      this.parent.updateBalanceFactor();
+    }
+  } else if (this.balanceFactor === 2) {
+    this.rotateLeft;
+  } else if (this.balanceFactor === -2) {
+    this.rotateRight;
+  }
 };
 
-AVLTree.prototype.getBalanceFactor = function() {
+AVLNode.prototype.getBalanceFactor = function() {
   var maxRightDepth = this.depth;
   var maxLeftDepth = this.depth;
   var cbRight = function(node) {
