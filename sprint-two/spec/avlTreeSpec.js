@@ -126,5 +126,33 @@ describe('avlTree', function() {
     // expect(avlTree.root.balanceFactor).to.equal(0);
     // expect(avlTree.root.left.balanceFactor).to.equal(0);
     // expect(avlTree.root.right.balanceFactor).to.equal(0);
+  });  
+
+  it('should rebalance with a double rotation in a left-right situation', function() {
+    avlTree.insert(52, 52);
+    avlTree.insert(80, 80);
+    expect(avlTree.root.value).to.equal(80);
+    expect(avlTree.root.left.value).to.equal(52);
+    expect(avlTree.root.right.value).to.equal(100);
+    // expect(avlTree.root.depth).to.equal(0);
+    // expect(avlTree.root.left.depth).to.equal(1);
+    // expect(avlTree.root.right.depth).to.equal(1);
+    // expect(avlTree.root.balanceFactor).to.equal(0);
+    // expect(avlTree.root.left.balanceFactor).to.equal(0);
+    // expect(avlTree.root.right.balanceFactor).to.equal(0);
+  });
+
+  it('should rebalance with a double rotation in a right-left situation', function() {
+    avlTree.insert(199, 199);
+    avlTree.insert(130, 130);
+    expect(avlTree.root.value).to.equal(130);
+    expect(avlTree.root.left.value).to.equal(100);
+    expect(avlTree.root.right.value).to.equal(199);
+    // expect(avlTree.root.depth).to.equal(0);
+    // expect(avlTree.root.left.depth).to.equal(1);
+    // expect(avlTree.root.right.depth).to.equal(1);
+    // expect(avlTree.root.balanceFactor).to.equal(0);
+    // expect(avlTree.root.left.balanceFactor).to.equal(0);
+    // expect(avlTree.root.right.balanceFactor).to.equal(0);
   });
 });

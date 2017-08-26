@@ -16,18 +16,18 @@ AVLTree.prototype.rotateIfNeeded = function(node) {
     if (node.right.balanceFactor < 0) {
       // do an extra rotation (double rotation) in a right-left situation
       // should become a right-right situation after the rotation
-      this.rotate(node.right.left, node.right, true);
+      this.rotate(node.right.left, node.right, true, true);
     }
     // do a simple rotation in a right-right situation
-    this.rotate(node, node.right, false);
+    this.rotate(node, node.right, false, false);
   } else if (node.balanceFactor === -2) {
     if (node.left.balanceFactor > 0) {
       // do an extra rotation (double rotation) in a left-right situation
       // should become a left-left situation after the rotation
-      this.rotate(node.left, node.left.right, false);
+      this.rotate(node.left, node.left.right, false, true);
     }
     // do a simple rotation in a left-left situation
-    this.rotate(node.left, node, true);
+    this.rotate(node.left, node, true, false);
   }
 };
 
@@ -57,27 +57,51 @@ AVLTree.prototype._searchNode = function(key) {
   }
 };
 
-AVLTree.prototype.rotate = function(left, right, isClockwise) {
-  if (!isClockwise) {
-    right.parent = left.parent;
-    if (left.parent) {
-      left.parent.right = right;
+AVLTree.prototype.rotate = function(left, right, isClockwise, firstOfDouble) {
+  var parent = isClockwise ? right.parent : left.parent;
+  var innerChild = isClockwise ? left.right : right.left;
+  // regardless of rotation direction,
+  // reassign pointers in a top-down, left-to-right order with respect to the final tree
+  if (isClockwise) {
+    if (firstOfDouble) {
+      // for a right-left rotation
+      parent.right = left;
     } else {
-      this.root = right;
+      // for a left-left rotation
+      if (parent) {
+        if (parent.left = right) {
+          parent.left = left;
+        } else {
+          parent.right = left;
+        }
+      } else {
+        this.root = left;
+      }
     }
-    left.right = right.left;
-    left.parent = right;
-    right.left = left;
-  } else {
-    left.parent = right.parent;
-    if (right.parent) {
-      right.parent.left = left;
-    } else {
-      this.root = left;
-    }
-    right.left = left.right;
-    right.parent = left;
+    left.parent = parent;
     left.right = right;
+    right.parent = left;
+    right.left = innerChild;
+  } else {
+    if (firstOfDouble) {
+      // for a left-right rotation
+      parent.left = right;
+    } else {
+      // for a right-right rotation
+      if (parent) {
+        if (parent.right = left) {
+          parent.right = right;
+        } else {
+          parent.left = right;
+        }
+      } else {
+        this.root = right;
+      }
+    }
+    right.parent = parent;
+    right.left = left;
+    left.parent = right;
+    left.right = innerChild;
   }
 };
 
