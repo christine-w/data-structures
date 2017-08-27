@@ -1,16 +1,27 @@
-var AVLTree = function(node) {
-  this.root = node;
+var AVLTree = function() {
+  this.root = null;
 };
 
 // Create a new node from a key value pair, and add it to the tree
 AVLTree.prototype.insert = function(key, value) {
   var newNode = new AVLNode(key, value);
-  this.root.insert(newNode);
-  // If newNode's parent does not have a parent, then it is the root,
-  // and the tree does not need a re-balance yet (|balance factor| must be < 2).
-  // Otherwise, check if it needs a rotation
-  if (newNode.parent.parent) {
-    this._rotateIfNeeded(newNode.parent.parent);
+  if (this.root) {
+    this.root.insert(newNode);
+    // If newNode's parent does not have a parent, then it is the root,
+    // and the tree does not need a re-balance yet (|balance factor| must be < 2).
+    // Otherwise, check if it needs a rotation
+    if (newNode.parent.parent) {
+      this._rotateIfNeeded(newNode.parent.parent);
+    }
+    var unbalancedNode = newNode;
+    while (unbalancedNode) {
+      if (Math.abs(unbalancedNode.balanceFactor) === 2) {
+        this._rotateIfNeeded(unbalancedNode);
+      }
+      unbalancedNode = unbalancedNode.parent;
+    }
+  } else {
+    this.root = newNode;
   }
 };
 
@@ -85,7 +96,7 @@ AVLTree.prototype._rotate = function(left, right, isClockwise, firstOfDouble) {
     } else {
       // For a left-left rotation
       if (parent) {
-        if (parent.left = right) {
+        if (parent.left === right) {
           parent.left = left;
         } else {
           parent.right = left;
@@ -108,7 +119,7 @@ AVLTree.prototype._rotate = function(left, right, isClockwise, firstOfDouble) {
     } else {
       // For a right-right rotation
       if (parent) {
-        if (parent.right = left) {
+        if (parent.right === left) {
           parent.right = right;
         } else {
           parent.left = right;
@@ -127,6 +138,37 @@ AVLTree.prototype._rotate = function(left, right, isClockwise, firstOfDouble) {
   }
 };
 
+AVLTree.prototype.toString = function() {
+  var lines = nodeToArrayOfStrings(this.root);
+  return lines.join('\n');
+};
+
+var nodeToArrayOfStrings = function(node) {
+  var result = [];
+  if (node) {
+    var parent;
+    if (node.parent) {
+      parent = node.parent.key;
+    } else {
+      parent = 'root';
+    }
+    result.push(node.key + ', ' + node.value + ' (' + parent + ')');
+    var left = nodeToArrayOfStrings(node.left);  //['null']
+    for (var i = 0; i < left.length; i++) {
+      var prefix = i === 0 ? '  L: ' : '  ';
+      result.push(prefix + left[i]);   // result = ['80, 80', '  L: null']
+    }
+    var right = nodeToArrayOfStrings(node.right);  //['null']
+    for (var i = 0; i < right.length; i++) {
+      var prefix = i === 0 ? '  R: ' : '  ';
+      result.push(prefix + right[i]);   // result = ['80, 80', '  L: null', '  R: null']
+    }
+  } else {
+    result.push('null');
+  }
+  return result;
+};
+
 var AVLNode = function(key, value) {
   this.parent = null;
   this.left = null;
@@ -136,6 +178,20 @@ var AVLNode = function(key, value) {
   this.depth = 0;
   // An AVLTree property used for maintaining balance
   this.balanceFactor = 0;
+};
+
+
+
+AVLNode.prototype.toString = function() {
+  var result = [];
+  var pairIndentation = ' '.repeat(this.depth * 2);
+  var childIndentation = ' '.repeat((this.depth + 1) * 2);
+  result.push(pairIndentation + this.key + ', ' + this.value);
+  result.push(childIndentation + 'L: ' + this.left.toString());
+
+  var left = recursiveFunc(this.left); 
+  var right = recursiveFunc(this.right); 
+  return result.join('\n');
 };
 
 // Recursively insert an AVLNode into the current node's subtree
@@ -193,11 +249,11 @@ AVLNode.prototype._updateDepth = function() {
 // therefore recurse upward and update balanceFactor of its ancestors.
 AVLNode.prototype._updateBalanceFactor = function() {
   this.balanceFactor = this._getBalanceFactor();
-  if (this.balanceFactor === 1 || this.balanceFactor === -1) {
+  if (Math.abs(this.balanceFactor) === 1) {
     if (this.parent) {
       this.parent._updateBalanceFactor();
     }
-  } 
+  }
 };
 
 // Use depthFirstLog to find the maximum depth of left subtree and right subtree
